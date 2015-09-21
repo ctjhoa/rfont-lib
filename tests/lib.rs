@@ -5,7 +5,7 @@ use fontlib::FontType;
 #[test]
 fn font_type_ttf1() {
     match fontlib::font_type("tests/TTF/Monaco_Linux.ttf").ok() {
-        Some(FontType::TrueType) => (),
+        Some(FontType::TTF) => (),
         _ => panic!(),
     }
 }
@@ -13,7 +13,7 @@ fn font_type_ttf1() {
 #[test]
 fn font_type_ttf2() {
     match fontlib::font_type("tests/TTF/ClearSans-Regular.ttf").ok() {
-        Some(FontType::TrueType) => (),
+        Some(FontType::TTF) => (),
         _ => panic!(),
     }
 }
@@ -21,7 +21,7 @@ fn font_type_ttf2() {
 #[test]
 fn font_type_otf() {
     match fontlib::font_type("tests/OTF/Kleymissky_0283.otf").ok() {
-        Some(FontType::OpenType) => (),
+        Some(FontType::OTF) => (),
         _ => panic!(),
     }
 }

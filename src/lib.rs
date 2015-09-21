@@ -6,8 +6,8 @@ use std::io::{self, BufReader, Read, Seek, SeekFrom};
 pub enum FontType {
     EOT,
     Glyph,
-    OpenType,
-    TrueType,
+    OTF,
+    TTF,
     WOFF
 }
 
@@ -17,10 +17,10 @@ pub fn font_type(source: &str) -> Result<FontType, io::Error> {
 
     try!(reader.read(&mut buf4b));
     match &buf4b {
-        &[0, 1, 0, 0] => Ok(FontType::TrueType),
+        &[0, 1, 0, 0] => Ok(FontType::TTF),
         _ => match &buf4b {
-            b"true" | b"typ1" => Ok(FontType::TrueType),
-            b"OTTO" => Ok(FontType::OpenType),
+            b"true" | b"typ1" => Ok(FontType::TTF),
+            b"OTTO" => Ok(FontType::OTF),
             b"wOFF" => Ok(FontType::WOFF),
             _ => {
                 let mut buf2b = [0u8; 2];
