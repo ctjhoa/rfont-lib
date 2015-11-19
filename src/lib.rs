@@ -97,15 +97,11 @@ impl Font {
                     if let Some(rec) = naming_table.name_records.iter().find(|&r| r.name_id == 1 && r.encoding_id == 1) {
                         try!(self.reader.seek(SeekFrom::Start(table.offset as u64 + naming_table.string_offset as u64 + rec.offset as u64)));
                         let mut buf = Vec::new();
-                        buf.resize(rec.length as usize, 0);
-                        try!(self.reader.read(&mut buf));
-                        if let Ok(font_family_name) = String::from_utf8(buf) {
-                            self.font_family_name = Some(font_family_name);
-
-                            Ok(self.font_family_name.clone())
-                        } else {
-                            Ok(None)
+                        for _ in (0..).take(rec.length as usize /2) {
+                            buf.push(try!(self.reader.read_u16::<BigEndian>()));
                         }
+                        self.font_family_name = Some(String::from_utf16_lossy(&buf));
+                        Ok(self.font_family_name.clone())
                     } else {
                         Ok(None)
                     }
