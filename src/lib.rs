@@ -7,7 +7,7 @@ mod table;
 use std::fs::File;
 use std::io::{self, BufReader, Read, Seek, SeekFrom, ErrorKind};
 use byteorder::{BigEndian, ReadBytesExt};
-use table::name::{NamingTable, NameRecord};
+use table::name::{NamingTable, NameRecord, LangTagRecord};
 
 pub enum FontType {
     EOT,
@@ -74,7 +74,15 @@ impl Font {
                         lang_tag_count: 0,
                         lang_tag_records: Vec::new(),
                     };
-                    // TODO: Handle lang tag records
+                    if naming_table.format == 1 {
+                        naming_table.lang_tag_count = try!(self.reader.read_u16::<BigEndian>());
+                        for _ in 0u16..naming_table.lang_tag_count {
+                            naming_table.lang_tag_records.push(LangTagRecord {
+                                length: try!(self.reader.read_u16::<BigEndian>()),
+                                offset: try!(self.reader.read_u16::<BigEndian>())
+                            });
+                        }
+                    }
                     for _ in 0u16..naming_table.count {
                         naming_table.name_records.push(NameRecord {
                             platform_id: try!(self.reader.read_u16::<BigEndian>()),
